@@ -1,0 +1,2 @@
+# react-starter-pack
+YARSP
