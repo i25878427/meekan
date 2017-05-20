@@ -25403,6 +25403,8 @@
 	  value: true
 	});
 	
+	var _handleActions;
+	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var _reduxActions = __webpack_require__(/*! redux-actions */ 189);
@@ -25417,12 +25419,15 @@
 	
 	var defaultState = {};
 	
-	exports.default = (0, _reduxActions.handleActions)(_defineProperty({}, _polls2.default.INIT, function (state, _ref) {
+	exports.default = (0, _reduxActions.handleActions)((_handleActions = {}, _defineProperty(_handleActions, _polls2.default.INIT, function (state, _ref) {
 	  var payload = _ref.payload;
 	
-	
 	  return _extends({}, state.polls, payload.polls);
-	}), defaultState);
+	}), _defineProperty(_handleActions, _polls2.default.SEARCH_BY, function (state, _ref2) {
+	  var payload = _ref2.payload;
+	
+	  return _extends({}, state);
+	}), _handleActions), defaultState);
 	
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "polls.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
@@ -25441,7 +25446,8 @@
 	  value: true
 	});
 	var ACTIONS = {
-	  INIT: 'INIT'
+	  INIT: 'INIT',
+	  SEARCH_BY: 'SEARCH_BY'
 	};
 	exports.default = ACTIONS;
 	
@@ -26784,6 +26790,7 @@
 	        debugger;
 	        var pollDetails = polls[key];
 	        return _react2.default.createElement(_poll2.default, {
+	          key: pollDetails.id,
 	          title: pollDetails.title,
 	          initiator: pollDetails.initiator.name,
 	          creationDate: pollDetails.initiated,
@@ -26921,17 +26928,26 @@
 	  function Search() {
 	    _classCallCheck(this, Search);
 	
-	    return _possibleConstructorReturn(this, (Search.__proto__ || Object.getPrototypeOf(Search)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (Search.__proto__ || Object.getPrototypeOf(Search)).call(this));
+	
+	    _this.searchPoll = _this.searchPoll.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(Search, [{
+	    key: 'searchPoll',
+	    value: function searchPoll(event) {
+	      debugger;
+	      console.log('aaa');
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'Search' },
 	        _react2.default.createElement(_reactFontawesome2.default, { name: 'search' }),
-	        _react2.default.createElement('input', { type: 'text', placeholder: 'Search' })
+	        _react2.default.createElement('input', { type: 'text', placeholder: 'Search', onChange: this.searchPoll })
 	      );
 	    }
 	  }]);
@@ -29062,6 +29078,10 @@
 	  var appProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	  return appProps;
 	});
+	var searchBySuccess = (0, _reduxActions.createAction)(_polls2.default.SEARCH_BY, function () {
+	  var appProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  return appProps;
+	});
 	
 	var allPollsActions = function allPollsActions(dispatch) {
 	  return {
@@ -29081,7 +29101,8 @@
 	      }).catch(function (errorAd) {
 	        throw errorAd;
 	      });
-	    }
+	    },
+	    searchBy: function searchBy() {}
 	  };
 	};
 	exports.default = allPollsActions;

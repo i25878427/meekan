@@ -20,6 +20,7 @@ export default class Polls extends Component {
       debugger
       const pollDetails = polls[key]
       return (<Poll 
+                key={pollDetails.id}
                 title={pollDetails.title} 
                 initiator={pollDetails.initiator.name} 
                 creationDate={pollDetails.initiated}

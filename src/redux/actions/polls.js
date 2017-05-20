@@ -5,6 +5,9 @@ import API from '../../utilities/api'
 const initSuccess = createAction(
   ACTIONS.INIT, (appProps = {}) => appProps
 )
+const searchBySuccess = createAction(
+  ACTIONS.SEARCH_BY, (appProps = {}) => appProps
+)
 
 
 const allPollsActions = (dispatch) => ({
@@ -26,6 +29,9 @@ const allPollsActions = (dispatch) => ({
       throw (errorAd)
     })
      
+  },
+  searchBy: () => {
+
   }
 })
 export default allPollsActions
