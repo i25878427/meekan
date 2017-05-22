@@ -9,7 +9,7 @@ export default class Search extends Component {
   }
   searchPoll (event) {
     debugger
-    console.log('aaa')
+    this.props.searchBy(event.target.value)
   }
   render() {
     return (
@@ -20,6 +20,3 @@ export default class Search extends Component {
     )
   }
 }
-
-
-

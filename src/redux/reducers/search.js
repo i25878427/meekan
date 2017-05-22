@@ -2,12 +2,12 @@ import { handleActions } from 'redux-actions'
 import ACTIONS from '../constants/polls'
 
 const defaultState = {
-  list: []
+  searchValue: ''
 }
 
 export default handleActions({
-  [ACTIONS.INIT]: (state, { payload }) => {
+  [ACTIONS.SEARCH_BY]: (state, { payload }) => {
     debugger
-    return { ...state,list: payload.polls }
+    return { ...state, searchValue: payload.searchValue }
   }
 }, defaultState)

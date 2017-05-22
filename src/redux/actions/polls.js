@@ -5,13 +5,11 @@ import API from '../../utilities/api'
 const initSuccess = createAction(
   ACTIONS.INIT, (appProps = {}) => appProps
 )
-const searchBySuccess = createAction(
-  ACTIONS.SEARCH_BY, (appProps = {}) => appProps
-)
+
 
 
 const allPollsActions = (dispatch) => ({
-  
+
   init: () => {
       const myHeaders = {
       Accept: 'text/plain',
@@ -23,14 +21,10 @@ const allPollsActions = (dispatch) => ({
       headers: myHeaders
     }
     ).then(polls => {
-     debugger
       dispatch(initSuccess({ polls }))
     }).catch(errorAd => {
       throw (errorAd)
     })
-     
-  },
-  searchBy: () => {
 
   }
 })

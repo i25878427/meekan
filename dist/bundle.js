@@ -21993,11 +21993,16 @@
 	
 	var _polls2 = _interopRequireDefault(_polls);
 	
+	var _search = __webpack_require__(/*! ./search */ 325);
+	
+	var _search2 = _interopRequireDefault(_search);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var rootReducer = (0, _redux.combineReducers)({
 	  app: _app2.default,
-	  polls: _polls2.default
+	  polls: _polls2.default,
+	  search: _search2.default
 	});
 	
 	exports.default = rootReducer;
@@ -25403,8 +25408,6 @@
 	  value: true
 	});
 	
-	var _handleActions;
-	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var _reduxActions = __webpack_require__(/*! redux-actions */ 189);
@@ -25417,17 +25420,16 @@
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
-	var defaultState = {};
+	var defaultState = {
+	  list: []
+	};
 	
-	exports.default = (0, _reduxActions.handleActions)((_handleActions = {}, _defineProperty(_handleActions, _polls2.default.INIT, function (state, _ref) {
+	exports.default = (0, _reduxActions.handleActions)(_defineProperty({}, _polls2.default.INIT, function (state, _ref) {
 	  var payload = _ref.payload;
 	
-	  return _extends({}, state.polls, payload.polls);
-	}), _defineProperty(_handleActions, _polls2.default.SEARCH_BY, function (state, _ref2) {
-	  var payload = _ref2.payload;
-	
-	  return _extends({}, state);
-	}), _handleActions), defaultState);
+	  debugger;
+	  return _extends({}, state, { list: payload.polls });
+	}), defaultState);
 	
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "polls.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
@@ -26589,7 +26591,7 @@
 	
 	var _app2 = _interopRequireDefault(_app);
 	
-	var _app3 = __webpack_require__(/*! ../../redux/actions/app */ 322);
+	var _app3 = __webpack_require__(/*! ../../redux/actions/app */ 324);
 	
 	var _app4 = _interopRequireDefault(_app3);
 	
@@ -26696,7 +26698,7 @@
 	
 	var _polls2 = _interopRequireDefault(_polls);
 	
-	var _polls3 = __webpack_require__(/*! ../../redux/actions/polls */ 320);
+	var _polls3 = __webpack_require__(/*! ../../redux/actions/polls */ 323);
 	
 	var _polls4 = _interopRequireDefault(_polls3);
 	
@@ -26711,8 +26713,12 @@
 	  var init = function init() {
 	    allPollsActions.init();
 	  };
+	  var searchBy = function searchBy(value) {
+	    allPollsActions.searchBy(value);
+	  };
 	  return {
-	    init: init
+	    init: init,
+	    searchBy: searchBy
 	  };
 	};
 	
@@ -26745,7 +26751,7 @@
 	
 	var _header2 = _interopRequireDefault(_header);
 	
-	var _poll = __webpack_require__(/*! ./poll */ 314);
+	var _poll = __webpack_require__(/*! ./poll */ 317);
 	
 	var _poll2 = _interopRequireDefault(_poll);
 	
@@ -26766,6 +26772,9 @@
 	    var _this = _possibleConstructorReturn(this, (Polls.__proto__ || Object.getPrototypeOf(Polls)).call(this));
 	
 	    _this.renderPolls = _this.renderPolls.bind(_this);
+	    _this.state = {
+	      list: {}
+	    };
 	    return _this;
 	  }
 	
@@ -26777,18 +26786,25 @@
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
-	      debugger;
+	      if (this.props.polls.list.length !== nextProps.polls.list) {
+	        this.setState({
+	          list: nextProps.polls.list
+	        });
+	      }
+	      if (this.props.search.searchValue !== nextProps.search.searchValue) {
+	        var list = this.props.polls.list.filter(function (poll) {
+	          return poll.title.toLowerCase().indexOf(nextProps.search.searchValue.toLowerCase()) > -1 || poll.initiator.name.toLowerCase().indexOf(nextProps.search.searchValue.toLowerCase()) > -1;
+	        });
+	        this.setState({
+	          list: list
+	        });
+	      }
 	    }
 	  }, {
 	    key: 'renderPolls',
 	    value: function renderPolls() {
-	      debugger;
-	      var polls = this.props.polls;
-	
-	      var pollsKeys = Object.keys(polls);
-	      var allPolls = pollsKeys.length > 0 && pollsKeys.map(function (key) {
-	        debugger;
-	        var pollDetails = polls[key];
+	      var polls = this.state.list;
+	      var allPolls = polls.length > 0 && polls.map(function (pollDetails) {
 	        return _react2.default.createElement(_poll2.default, {
 	          key: pollDetails.id,
 	          title: pollDetails.title,
@@ -26802,8 +26818,6 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      debugger;
-	
 	      return _react2.default.createElement(
 	        'div',
 	        null,
@@ -26841,15 +26855,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _search = __webpack_require__(/*! ../search/search */ 293);
+	var _search = __webpack_require__(/*! ../../containers/search/search */ 293);
 	
 	var _search2 = _interopRequireDefault(_search);
 	
-	var _filter = __webpack_require__(/*! ../filter/filter */ 309);
+	var _filter = __webpack_require__(/*! ../filter/filter */ 312);
 	
 	var _filter2 = _interopRequireDefault(_filter);
 	
-	__webpack_require__(/*! ./header.scss */ 312);
+	__webpack_require__(/*! ./header.scss */ 315);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -26890,6 +26904,57 @@
 /***/ }),
 /* 293 */
 /*!*****************************************!*\
+  !*** ./src/containers/search/search.js ***!
+  \*****************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _reactRedux = __webpack_require__(/*! react-redux */ 178);
+	
+	var _search = __webpack_require__(/*! ../../components/search/search */ 294);
+	
+	var _search2 = _interopRequireDefault(_search);
+	
+	var _search3 = __webpack_require__(/*! ../../redux/actions/search */ 310);
+	
+	var _search4 = _interopRequireDefault(_search3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function mapStateToProps(state) {
+	  return _extends({}, state);
+	}
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+	  var allSearchActions = (0, _search4.default)(dispatch);
+	  var init = function init() {
+	    allPollsActions.init();
+	  };
+	  var searchBy = function searchBy(value) {
+	    allSearchActions.searchBy(value);
+	  };
+	  return {
+	    init: init,
+	    searchBy: searchBy
+	  };
+	};
+	
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_search2.default);
+	
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "search.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ }),
+/* 294 */
+/*!*****************************************!*\
   !*** ./src/components/search/search.js ***!
   \*****************************************/
 /***/ (function(module, exports, __webpack_require__) {
@@ -26908,11 +26973,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 294);
+	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 295);
 	
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 	
-	__webpack_require__(/*! ./search.scss */ 304);
+	__webpack_require__(/*! ./search.scss */ 305);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -26938,7 +27003,7 @@
 	    key: 'searchPoll',
 	    value: function searchPoll(event) {
 	      debugger;
-	      console.log('aaa');
+	      this.props.searchBy(event.target.value);
 	    }
 	  }, {
 	    key: 'render',
@@ -26960,7 +27025,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "search.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ }),
-/* 294 */
+/* 295 */
 /*!******************************************!*\
   !*** ./~/react-fontawesome/lib/index.js ***!
   \******************************************/
@@ -26980,11 +27045,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _propTypes = __webpack_require__(/*! prop-types */ 295);
+	var _propTypes = __webpack_require__(/*! prop-types */ 296);
 	
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 	
-	var _screenReaderStyles = __webpack_require__(/*! ./screen-reader-styles */ 303);
+	var _screenReaderStyles = __webpack_require__(/*! ./screen-reader-styles */ 304);
 	
 	var _screenReaderStyles2 = _interopRequireDefault(_screenReaderStyles);
 	
@@ -27109,7 +27174,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 295 */
+/* 296 */
 /*!*******************************!*\
   !*** ./~/prop-types/index.js ***!
   \*******************************/
@@ -27139,17 +27204,17 @@
 	  // By explicitly using `prop-types` you are opting into new development behavior.
 	  // http://fb.me/prop-types-in-prod
 	  var throwOnDirectAccess = true;
-	  module.exports = __webpack_require__(/*! ./factoryWithTypeCheckers */ 296)(isValidElement, throwOnDirectAccess);
+	  module.exports = __webpack_require__(/*! ./factoryWithTypeCheckers */ 297)(isValidElement, throwOnDirectAccess);
 	} else {
 	  // By explicitly using `prop-types` you are opting into new production behavior.
 	  // http://fb.me/prop-types-in-prod
-	  module.exports = __webpack_require__(/*! ./factoryWithThrowingShims */ 302)();
+	  module.exports = __webpack_require__(/*! ./factoryWithThrowingShims */ 303)();
 	}
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../process/browser.js */ 4)))
 
 /***/ }),
-/* 296 */
+/* 297 */
 /*!*************************************************!*\
   !*** ./~/prop-types/factoryWithTypeCheckers.js ***!
   \*************************************************/
@@ -27166,12 +27231,12 @@
 	
 	'use strict';
 	
-	var emptyFunction = __webpack_require__(/*! fbjs/lib/emptyFunction */ 297);
-	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 298);
-	var warning = __webpack_require__(/*! fbjs/lib/warning */ 299);
+	var emptyFunction = __webpack_require__(/*! fbjs/lib/emptyFunction */ 298);
+	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 299);
+	var warning = __webpack_require__(/*! fbjs/lib/warning */ 300);
 	
-	var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 300);
-	var checkPropTypes = __webpack_require__(/*! ./checkPropTypes */ 301);
+	var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 301);
+	var checkPropTypes = __webpack_require__(/*! ./checkPropTypes */ 302);
 	
 	module.exports = function(isValidElement, throwOnDirectAccess) {
 	  /* global Symbol */
@@ -27671,7 +27736,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../process/browser.js */ 4)))
 
 /***/ }),
-/* 297 */
+/* 298 */
 /*!**************************************************!*\
   !*** ./~/prop-types/~/fbjs/lib/emptyFunction.js ***!
   \**************************************************/
@@ -27717,7 +27782,7 @@
 	module.exports = emptyFunction;
 
 /***/ }),
-/* 298 */
+/* 299 */
 /*!**********************************************!*\
   !*** ./~/prop-types/~/fbjs/lib/invariant.js ***!
   \**********************************************/
@@ -27781,7 +27846,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
 
 /***/ }),
-/* 299 */
+/* 300 */
 /*!********************************************!*\
   !*** ./~/prop-types/~/fbjs/lib/warning.js ***!
   \********************************************/
@@ -27799,7 +27864,7 @@
 	
 	'use strict';
 	
-	var emptyFunction = __webpack_require__(/*! ./emptyFunction */ 297);
+	var emptyFunction = __webpack_require__(/*! ./emptyFunction */ 298);
 	
 	/**
 	 * Similar to invariant but only logs a warning if the condition is not met.
@@ -27856,7 +27921,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../../../../process/browser.js */ 4)))
 
 /***/ }),
-/* 300 */
+/* 301 */
 /*!**************************************************!*\
   !*** ./~/prop-types/lib/ReactPropTypesSecret.js ***!
   \**************************************************/
@@ -27879,7 +27944,7 @@
 
 
 /***/ }),
-/* 301 */
+/* 302 */
 /*!****************************************!*\
   !*** ./~/prop-types/checkPropTypes.js ***!
   \****************************************/
@@ -27897,9 +27962,9 @@
 	'use strict';
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 298);
-	  var warning = __webpack_require__(/*! fbjs/lib/warning */ 299);
-	  var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 300);
+	  var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 299);
+	  var warning = __webpack_require__(/*! fbjs/lib/warning */ 300);
+	  var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 301);
 	  var loggedTypeFailures = {};
 	}
 	
@@ -27950,7 +28015,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./../process/browser.js */ 4)))
 
 /***/ }),
-/* 302 */
+/* 303 */
 /*!**************************************************!*\
   !*** ./~/prop-types/factoryWithThrowingShims.js ***!
   \**************************************************/
@@ -27967,9 +28032,9 @@
 	
 	'use strict';
 	
-	var emptyFunction = __webpack_require__(/*! fbjs/lib/emptyFunction */ 297);
-	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 298);
-	var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 300);
+	var emptyFunction = __webpack_require__(/*! fbjs/lib/emptyFunction */ 298);
+	var invariant = __webpack_require__(/*! fbjs/lib/invariant */ 299);
+	var ReactPropTypesSecret = __webpack_require__(/*! ./lib/ReactPropTypesSecret */ 301);
 	
 	module.exports = function() {
 	  function shim(props, propName, componentName, location, propFullName, secret) {
@@ -28018,7 +28083,7 @@
 
 
 /***/ }),
-/* 303 */
+/* 304 */
 /*!*********************************************************!*\
   !*** ./~/react-fontawesome/lib/screen-reader-styles.js ***!
   \*********************************************************/
@@ -28042,7 +28107,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 304 */
+/* 305 */
 /*!*******************************************!*\
   !*** ./src/components/search/search.scss ***!
   \*******************************************/
@@ -28051,7 +28116,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./search.scss */ 305);
+	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./search.scss */ 306);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -28059,7 +28124,7 @@
 	var options = {}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 307)(content, options);
+	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 308)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -28076,13 +28141,13 @@
 	}
 
 /***/ }),
-/* 305 */
+/* 306 */
 /*!****************************************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader/lib/loader.js!./src/components/search/search.scss ***!
   \****************************************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 306)(undefined);
+	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 307)(undefined);
 	// imports
 	
 	
@@ -28093,7 +28158,7 @@
 
 
 /***/ }),
-/* 306 */
+/* 307 */
 /*!**************************************!*\
   !*** ./~/css-loader/lib/css-base.js ***!
   \**************************************/
@@ -28178,7 +28243,7 @@
 
 
 /***/ }),
-/* 307 */
+/* 308 */
 /*!*************************************!*\
   !*** ./~/style-loader/addStyles.js ***!
   \*************************************/
@@ -28218,7 +28283,7 @@
 		singletonElement = null,
 		singletonCounter = 0,
 		styleElementsInsertedAtTop = [],
-		fixUrls = __webpack_require__(/*! ./fixUrls */ 308);
+		fixUrls = __webpack_require__(/*! ./fixUrls */ 309);
 	
 	module.exports = function(list, options) {
 		if(true) {
@@ -28494,7 +28559,7 @@
 
 
 /***/ }),
-/* 308 */
+/* 309 */
 /*!***********************************!*\
   !*** ./~/style-loader/fixUrls.js ***!
   \***********************************/
@@ -28592,7 +28657,104 @@
 
 
 /***/ }),
-/* 309 */
+/* 310 */
+/*!*************************************!*\
+  !*** ./src/redux/actions/search.js ***!
+  \*************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _reduxActions = __webpack_require__(/*! redux-actions */ 189);
+	
+	var _polls = __webpack_require__(/*! ../constants/polls */ 276);
+	
+	var _polls2 = _interopRequireDefault(_polls);
+	
+	var _api = __webpack_require__(/*! ../../utilities/api */ 311);
+	
+	var _api2 = _interopRequireDefault(_api);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var searchBySuccess = (0, _reduxActions.createAction)(_polls2.default.SEARCH_BY, function () {
+	  var searchProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  return searchProps;
+	});
+	
+	var allSearchActions = function allSearchActions(dispatch) {
+	  return {
+	    searchBy: function searchBy(value) {
+	      dispatch(searchBySuccess({ searchValue: value }));
+	    }
+	  };
+	};
+	exports.default = allSearchActions;
+	
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "search.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ }),
+/* 311 */
+/*!******************************!*\
+  !*** ./src/utilities/api.js ***!
+  \******************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	
+	'use strict';
+	
+	module.exports = {
+	  SERVER_URL: 'https://boiling-tor-31289.herokuapp.com/users/me/polls',
+	
+	  fetchAPI: function fetchAPI(params) {
+	    var method = params.method || 'GET';
+	    var qs = '';
+	    var body = void 0;
+	    var headers = params.headers || {
+	      Accept: 'application/json',
+	      'Content-Type': 'application/json'
+	    };
+	    if (['GET', 'DELETE'].indexOf(method) > -1) {
+	      qs = '?' + getQueryString(params.data);
+	    } else {
+	      // POST or PUT
+	      body = JSON.stringify(params.data);
+	    }
+	    var url = params.url + qs;
+	    var f = fetch(url, { method: method, headers: headers }).then(function (response) {
+	      return response.json();
+	    }).then(function (responseData) {
+	      return responseData;
+	    }).catch(function (error) {
+	      return error;
+	    });
+	    return f;
+	  }
+	};
+	
+	var getQueryString = function getQueryString(params) {
+	  return Object.keys(params).map(function (k) {
+	    if (Array.isArray(params[k])) {
+	      return params[k].map(function (val) {
+	        return encodeURIComponent(k) + '[]=' + encodeURIComponent(val);
+	      }).join('&');
+	    }
+	
+	    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+	  }).join('&');
+	};
+	
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "api.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ }),
+/* 312 */
 /*!*****************************************!*\
   !*** ./src/components/filter/filter.js ***!
   \*****************************************/
@@ -28612,11 +28774,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 294);
+	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 295);
 	
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 	
-	__webpack_require__(/*! ./filter.scss */ 310);
+	__webpack_require__(/*! ./filter.scss */ 313);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -28659,7 +28821,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "filter.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ }),
-/* 310 */
+/* 313 */
 /*!*******************************************!*\
   !*** ./src/components/filter/filter.scss ***!
   \*******************************************/
@@ -28668,7 +28830,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./filter.scss */ 311);
+	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./filter.scss */ 314);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -28676,7 +28838,7 @@
 	var options = {}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 307)(content, options);
+	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 308)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -28693,13 +28855,13 @@
 	}
 
 /***/ }),
-/* 311 */
+/* 314 */
 /*!****************************************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader/lib/loader.js!./src/components/filter/filter.scss ***!
   \****************************************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 306)(undefined);
+	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 307)(undefined);
 	// imports
 	
 	
@@ -28710,7 +28872,7 @@
 
 
 /***/ }),
-/* 312 */
+/* 315 */
 /*!*******************************************!*\
   !*** ./src/components/header/header.scss ***!
   \*******************************************/
@@ -28719,7 +28881,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./header.scss */ 313);
+	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./header.scss */ 316);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -28727,7 +28889,7 @@
 	var options = {}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 307)(content, options);
+	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 308)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -28744,13 +28906,13 @@
 	}
 
 /***/ }),
-/* 313 */
+/* 316 */
 /*!****************************************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader/lib/loader.js!./src/components/header/header.scss ***!
   \****************************************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 306)(undefined);
+	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 307)(undefined);
 	// imports
 	
 	
@@ -28761,7 +28923,7 @@
 
 
 /***/ }),
-/* 314 */
+/* 317 */
 /*!**************************************!*\
   !*** ./src/components/polls/poll.js ***!
   \**************************************/
@@ -28781,13 +28943,13 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	__webpack_require__(/*! ./poll.scss */ 315);
+	__webpack_require__(/*! ./poll.scss */ 318);
 	
-	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 294);
+	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 295);
 	
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 	
-	var _poll_footer = __webpack_require__(/*! ./poll_footer */ 317);
+	var _poll_footer = __webpack_require__(/*! ./poll_footer */ 320);
 	
 	var _poll_footer2 = _interopRequireDefault(_poll_footer);
 	
@@ -28863,7 +29025,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "poll.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ }),
-/* 315 */
+/* 318 */
 /*!****************************************!*\
   !*** ./src/components/polls/poll.scss ***!
   \****************************************/
@@ -28872,7 +29034,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./poll.scss */ 316);
+	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./poll.scss */ 319);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -28880,7 +29042,7 @@
 	var options = {}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 307)(content, options);
+	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 308)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -28897,13 +29059,13 @@
 	}
 
 /***/ }),
-/* 316 */
+/* 319 */
 /*!*************************************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader/lib/loader.js!./src/components/polls/poll.scss ***!
   \*************************************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 306)(undefined);
+	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 307)(undefined);
 	// imports
 	
 	
@@ -28914,7 +29076,7 @@
 
 
 /***/ }),
-/* 317 */
+/* 320 */
 /*!*********************************************!*\
   !*** ./src/components/polls/poll_footer.js ***!
   \*********************************************/
@@ -28934,9 +29096,9 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	__webpack_require__(/*! ./poll_footer.scss */ 318);
+	__webpack_require__(/*! ./poll_footer.scss */ 321);
 	
-	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 294);
+	var _reactFontawesome = __webpack_require__(/*! react-fontawesome */ 295);
 	
 	var _reactFontawesome2 = _interopRequireDefault(_reactFontawesome);
 	
@@ -28997,7 +29159,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "poll_footer.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ }),
-/* 318 */
+/* 321 */
 /*!***********************************************!*\
   !*** ./src/components/polls/poll_footer.scss ***!
   \***********************************************/
@@ -29006,7 +29168,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./poll_footer.scss */ 319);
+	var content = __webpack_require__(/*! !../../../~/css-loader!../../../~/sass-loader/lib/loader.js!./poll_footer.scss */ 322);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// Prepare cssTransformation
 	var transform;
@@ -29014,7 +29176,7 @@
 	var options = {}
 	options.transform = transform
 	// add the styles to the DOM
-	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 307)(content, options);
+	var update = __webpack_require__(/*! ../../../~/style-loader/addStyles.js */ 308)(content, options);
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -29031,13 +29193,13 @@
 	}
 
 /***/ }),
-/* 319 */
+/* 322 */
 /*!********************************************************************************************!*\
   !*** ./~/css-loader!./~/sass-loader/lib/loader.js!./src/components/polls/poll_footer.scss ***!
   \********************************************************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 306)(undefined);
+	exports = module.exports = __webpack_require__(/*! ../../../~/css-loader/lib/css-base.js */ 307)(undefined);
 	// imports
 	
 	
@@ -29048,7 +29210,7 @@
 
 
 /***/ }),
-/* 320 */
+/* 323 */
 /*!************************************!*\
   !*** ./src/redux/actions/polls.js ***!
   \************************************/
@@ -29068,17 +29230,13 @@
 	
 	var _polls2 = _interopRequireDefault(_polls);
 	
-	var _api = __webpack_require__(/*! ../../utilities/api */ 321);
+	var _api = __webpack_require__(/*! ../../utilities/api */ 311);
 	
 	var _api2 = _interopRequireDefault(_api);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var initSuccess = (0, _reduxActions.createAction)(_polls2.default.INIT, function () {
-	  var appProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	  return appProps;
-	});
-	var searchBySuccess = (0, _reduxActions.createAction)(_polls2.default.SEARCH_BY, function () {
 	  var appProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	  return appProps;
 	});
@@ -29096,13 +29254,11 @@
 	        data: {},
 	        headers: myHeaders
 	      }).then(function (polls) {
-	        debugger;
 	        dispatch(initSuccess({ polls: polls }));
 	      }).catch(function (errorAd) {
 	        throw errorAd;
 	      });
-	    },
-	    searchBy: function searchBy() {}
+	    }
 	  };
 	};
 	exports.default = allPollsActions;
@@ -29110,61 +29266,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "polls.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ }),
-/* 321 */
-/*!******************************!*\
-  !*** ./src/utilities/api.js ***!
-  \******************************/
-/***/ (function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-	
-	'use strict';
-	
-	module.exports = {
-	  SERVER_URL: 'https://boiling-tor-31289.herokuapp.com/users/me/polls',
-	
-	  fetchAPI: function fetchAPI(params) {
-	    var method = params.method || 'GET';
-	    var qs = '';
-	    var body = void 0;
-	    var headers = params.headers || {
-	      Accept: 'application/json',
-	      'Content-Type': 'application/json'
-	    };
-	    if (['GET', 'DELETE'].indexOf(method) > -1) {
-	      qs = '?' + getQueryString(params.data);
-	    } else {
-	      // POST or PUT
-	      body = JSON.stringify(params.data);
-	    }
-	    var url = params.url + qs;
-	    var f = fetch(url, { method: method, headers: headers }).then(function (response) {
-	      return response.json();
-	    }).then(function (responseData) {
-	      return responseData;
-	    }).catch(function (error) {
-	      return error;
-	    });
-	    return f;
-	  }
-	};
-	
-	var getQueryString = function getQueryString(params) {
-	  return Object.keys(params).map(function (k) {
-	    if (Array.isArray(params[k])) {
-	      return params[k].map(function (val) {
-	        return encodeURIComponent(k) + '[]=' + encodeURIComponent(val);
-	      }).join('&');
-	    }
-	
-	    return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
-	  }).join('&');
-	};
-	
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "api.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ }),
-/* 322 */
+/* 324 */
 /*!**********************************!*\
   !*** ./src/redux/actions/app.js ***!
   \**********************************/
@@ -29200,6 +29302,46 @@
 	exports.default = allAppActions;
 	
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "app.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ }),
+/* 325 */
+/*!**************************************!*\
+  !*** ./src/redux/reducers/search.js ***!
+  \**************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _reduxActions = __webpack_require__(/*! redux-actions */ 189);
+	
+	var _polls = __webpack_require__(/*! ../constants/polls */ 276);
+	
+	var _polls2 = _interopRequireDefault(_polls);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	var defaultState = {
+	  searchValue: ''
+	};
+	
+	exports.default = (0, _reduxActions.handleActions)(_defineProperty({}, _polls2.default.SEARCH_BY, function (state, _ref) {
+	  var payload = _ref.payload;
+	
+	  debugger;
+	  return _extends({}, state, { searchValue: payload.searchValue });
+	}), defaultState);
+	
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/roygoren/Developer/meekan/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot apply hot update to " + "search.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ })
 /******/ ]);

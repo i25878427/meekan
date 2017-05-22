@@ -5,34 +5,44 @@ export default class Polls extends Component {
   constructor(){
     super()
     this.renderPolls = this.renderPolls.bind(this)
+    this.state = {
+      list: {}
+    }
   }
   componentDidMount() {
-    this.props.init()    
+    this.props.init()
   }
   componentWillReceiveProps(nextProps) {
-    debugger
+    if (this.props.polls.list.length !== nextProps.polls.list) {
+      this.setState({
+        list: nextProps.polls.list
+      })
+    }
+    if (this.props.search.searchValue !== nextProps.search.searchValue) {
+      const list = this.props.polls.list.filter((poll) => {
+        return (poll.title.toLowerCase().indexOf(nextProps.search.searchValue.toLowerCase()) > -1) ||
+                (poll.initiator.name.toLowerCase().indexOf(nextProps.search.searchValue.toLowerCase()) > -1)
+      })
+      this.setState({
+        list
+      })
+    }
   }
   renderPolls(){
-    debugger
-    const { polls } = this.props
-    const pollsKeys = Object.keys(polls)
-    const allPolls = pollsKeys.length > 0 && pollsKeys.map((key) => {
-      debugger
-      const pollDetails = polls[key]
-      return (<Poll 
-                key={pollDetails.id}
-                title={pollDetails.title} 
-                initiator={pollDetails.initiator.name} 
-                creationDate={pollDetails.initiated}
-                participantsCount={pollDetails.participantsCount}
-                 />
-              )
+    const polls = this.state.list
+    const allPolls = polls.length > 0 && polls.map((pollDetails) => {
+    return (<Poll
+              key={pollDetails.id}
+              title={pollDetails.title}
+              initiator={pollDetails.initiator.name}
+              creationDate={pollDetails.initiated}
+              participantsCount={pollDetails.participantsCount}
+               />
+            )
     })
     return  allPolls
   }
   render() {
-    debugger
-    
     return (
       <div>
         <Header />
@@ -41,4 +51,3 @@ export default class Polls extends Component {
     );
   }
 }
-

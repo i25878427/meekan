@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import Search from '../search/search'
+import Search from '../../containers/search/search'
 import Filter from '../filter/filter'
 import './header.scss'
 
